@@ -43,13 +43,11 @@
       "main.js",
       "preload.cjs",
       "icon.png",
-      "backend/server.js",
-      "backend/package.json",
       "frontend/dist/**/*",
       "node_modules/**/*"
     ],
     "extraResources": [
-      "backend/node_modules/**/*"
+      "backend/**/*"
     ]
   },
   "keywords": [],

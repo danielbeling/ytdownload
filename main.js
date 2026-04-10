@@ -1,14 +1,13 @@
-import { app, BrowserWindow, ipcMain, shell, dialog, Notification } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, dialog, Notification, utilityProcess } from 'electron';
 import pkg from 'electron-updater';
 const { autoUpdater } = pkg;
 import path from 'path';
 import fs from 'fs';
-import isDev from 'electron-is-dev';
 import { fileURLToPath } from 'url';
-import { fork } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const isDev = !app.isPackaged;
 
 // --- Configurações e Persistência ---
 const configPath = path.join(app.getPath('userData'), 'settings.json');
@@ -34,19 +33,39 @@ function saveSettings(newSettings) {
 
 // --- Processos Filhos (Backend) ---
 let serverProcess;
+
+function getBackendPath() {
+  const backendPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'backend', 'server.js')
+    : path.join(__dirname, 'backend', 'server.js');
+    
+  console.log('[Electron] Usando backend em:', backendPath);
+  return backendPath;
+}
+
 function startBackend() {
-  serverProcess = fork(path.join(__dirname, 'backend/server.js'), [], {
-    cwd: path.join(__dirname, 'backend'),
+  const backendPath = getBackendPath();
+  
+  if (!fs.existsSync(backendPath)) {
+    console.error('[Electron Error] Arquivo do backend não encontrado:', backendPath);
+    return;
+  }
+
+  serverProcess = utilityProcess.fork(backendPath, [], {
+    stdio: 'pipe',
     env: { 
       ...process.env, 
       ELECTRON_RUNNING: 'true',
-      USER_DOWNLOADS_DIR: path.dirname(settings.downloadFolder) // Informa ao backend onde trabalhar
-    },
-    silent: true
+      USER_DOWNLOADS_DIR: path.dirname(settings.downloadFolder)
+    }
   });
 
   serverProcess.stdout.on('data', (data) => console.log('[Backend Log]', data.toString()));
   serverProcess.stderr.on('data', (data) => console.error('[Backend Error]', data.toString()));
+  
+  serverProcess.on('exit', (code) => {
+    console.log(`[Backend] Processo finalizado com código: ${code}`);
+  });
 }
 
 // --- Janelas ---
