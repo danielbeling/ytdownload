@@ -7,7 +7,7 @@ import ConversionCard from './components/ConversionCard';
 import DownloadAllBanner from './components/DownloadAllBanner';
 import VideoInfoCard from './components/VideoInfoCard';
 import SettingsModal from './components/SettingsModal';
-import { FaTrash, FaMusic, FaVideo } from 'react-icons/fa';
+import { FaTrash, FaMusic, FaVideo, FaSync } from 'react-icons/fa';
 import { MdLibraryMusic, MdVideoLibrary, MdSearch, MdClose, MdSettings } from 'react-icons/md';
 
 export default function App() {
