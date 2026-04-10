@@ -1,6 +1,6 @@
 {
   "name": "youtube-converter-pro",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "YouTube Downloader Desktop",
   "main": "main.js",
   "type": "module",
