@@ -60,7 +60,8 @@
     "electron-builder": "^26.8.1"
   },
   "dependencies": {
-    "electron-updater": "^6.8.3",
-    "electron-is-dev": "^3.0.1"
+    "@vercel/analytics": "^2.0.1",
+    "electron-is-dev": "^3.0.1",
+    "electron-updater": "^6.8.3"
   }
 }
