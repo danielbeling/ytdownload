@@ -78,10 +78,10 @@ export default function ConversionCard({ job, onDownload }) {
             id={`download-${job.id}`}
             className="btn btn-success"
             onClick={() => onDownload(job)}
-            title={`Baixar ${formatLabel}`}
+            title={window.electronAPI ? "Abrir pasta de downloads" : `Baixar ${formatLabel}`}
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            <MdDownload size={18} /> Baixar {formatLabel}
+            <MdDownload size={18} /> {window.electronAPI ? 'Abrir Pasta' : `Baixar ${formatLabel}`}
           </button>
         )}
       </div>

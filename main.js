@@ -130,8 +130,9 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     setTimeout(() => {
       if (splashWindow) splashWindow.close();
+      mainWindow.maximize();
       mainWindow.show();
-    }, 1500); // 1.5s mínimo de splash para efeito visual
+    }, 1500); 
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -148,6 +149,11 @@ function createWindow() {
 }
 
 // --- IPC Handlers ---
+
+ipcMain.handle('get-app-version', () => {
+  return app.getVersion();
+});
+
 ipcMain.on('open-downloads-folder', () => {
   if (!fs.existsSync(settings.downloadFolder)) {
     fs.mkdirSync(settings.downloadFolder, { recursive: true });

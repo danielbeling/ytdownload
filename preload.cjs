@@ -13,4 +13,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', (event, info) => callback(info)),
   onUpdateProgress: (callback) => ipcRenderer.on('update-download-progress', (event, progress) => callback(progress)),
   restartApp: () => ipcRenderer.send('restart-app'),
+  getVersion: () => ipcRenderer.invoke('get-app-version'),
 });

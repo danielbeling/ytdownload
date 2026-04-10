@@ -57,7 +57,7 @@ function sanitizeTitle(title) {
 
 function getCommonFlags() {
   const ffmpegLoc = ffmpegPath.replace(/\\/g, '/');
-  return `--ffmpeg-location "${ffmpegLoc}" --no-playlist --no-check-certificate`;
+  return `--ffmpeg-location "${ffmpegLoc}" --no-playlist --no-check-certificate --no-cache-dir`;
 }
 
 function isValidYouTubeUrl(url) {
@@ -105,12 +105,20 @@ async function processJob(job) {
       );
 
       const outputFile = path.join(DOWNLOADS_DIR, `${job.id}.mp3`);
-      if (!fs.existsSync(outputFile)) {
-        const files = fs.readdirSync(DOWNLOADS_DIR).filter(f => f.startsWith(job.id));
-        if (files.length === 0) throw new Error('Arquivo de saída não encontrado.');
-        jobs[job.id].filename = files[0];
+      if (fs.existsSync(outputFile)) {
+        const finalFileName = `${title || job.id}.mp3`;
+        const finalPath = path.join(DOWNLOADS_DIR, finalFileName);
+        try {
+          if (fs.existsSync(finalPath)) fs.unlinkSync(finalPath);
+          fs.renameSync(outputFile, finalPath);
+          jobs[job.id].filename = finalFileName;
+        } catch (e) {
+          jobs[job.id].filename = `${job.id}.mp3`;
+        }
       } else {
-        jobs[job.id].filename = `${job.id}.mp3`;
+        const files = fs.readdirSync(DOWNLOADS_DIR).filter(f => f.startsWith(job.id));
+        if (files.length === 0) throw new Error('O motor de download não gerou o arquivo MP3.');
+        jobs[job.id].filename = files[0];
       }
     } else {
       // MP4
@@ -127,13 +135,26 @@ async function processJob(job) {
       );
 
       const outputFile = path.join(DOWNLOADS_DIR, `${job.id}.mp4`);
-      if (!fs.existsSync(outputFile)) {
-        const files = fs.readdirSync(DOWNLOADS_DIR).filter(f => f.startsWith(job.id));
-        if (files.length === 0) throw new Error('Arquivo de saída não encontrado.');
-        jobs[job.id].filename = files[0];
+      if (fs.existsSync(outputFile)) {
+        const finalFileName = `${title || job.id}.mp4`;
+        const finalPath = path.join(DOWNLOADS_DIR, finalFileName);
+        try {
+          if (fs.existsSync(finalPath)) fs.unlinkSync(finalPath);
+          fs.renameSync(outputFile, finalPath);
+          jobs[job.id].filename = finalFileName;
+        } catch (e) {
+          jobs[job.id].filename = `${job.id}.mp4`;
+        }
       } else {
-        jobs[job.id].filename = `${job.id}.mp4`;
+        const files = fs.readdirSync(DOWNLOADS_DIR).filter(f => f.startsWith(job.id));
+        if (files.length === 0) throw new Error('O motor de download não gerou o arquivo MP4.');
+        jobs[job.id].filename = files[0];
       }
+    }
+
+    const finalPath = path.join(DOWNLOADS_DIR, jobs[job.id].filename || '');
+    if (!jobs[job.id].filename || !fs.existsSync(finalPath)) {
+      throw new Error('O download terminou mas o arquivo não foi encontrado na pasta.');
     }
 
     jobs[job.id].status = 'done';

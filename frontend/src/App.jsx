@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useConversions } from './hooks/useConversions';
 import { useVideoDownload } from './hooks/useVideoDownload';
 import FormatTabs from './components/FormatTabs';
@@ -42,6 +42,13 @@ export default function App() {
   } = useVideoDownload();
 
   const [mp4Url, setMp4Url] = useState('');
+  const [appVersion, setAppVersion] = useState('...');
+
+  useEffect(() => {
+    if (window.electronAPI) {
+      window.electronAPI.getVersion().then(setAppVersion).catch(() => setAppVersion('v1.0.0'));
+    }
+  }, []);
 
   const handleMp4Search = () => {
     if (!mp4Url.trim()) return;
@@ -282,6 +289,7 @@ export default function App() {
       {/* Footer */}
       <footer className="footer">
         <p>Feito com <span className="heart">♥</span> por <a href="https://danieldeveloper.vercel.app/" target="_blank" rel="noopener noreferrer">Daniel Beling</a></p>
+        <p className="version-tag">Versão {appVersion}</p>
       </footer>
       {/* Modals */}
       <SettingsModal 

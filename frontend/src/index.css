@@ -752,8 +752,22 @@ html, body {
   margin-top: 2rem;
   padding: 1rem;
   text-align: center;
-  font-size: 0.78rem;
   color: var(--text3);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.version-tag {
+  font-family: 'Inter', monospace;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  letter-spacing: 0.05em;
+  background: var(--bg3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .footer .heart {
