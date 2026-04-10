@@ -14,6 +14,12 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Localizar binário do yt-dlp (absoluto para funcionar no Electron empacotado)
+const tryYtdlpPath = path.join(__dirname, 'node_modules', 'yt-dlp-exec', 'bin', 'yt-dlp.exe');
+const YTDLP_BIN = fs.existsSync(tryYtdlpPath) 
+  ? `"${tryYtdlpPath.replace(/\\/g, '/')}"` 
+  : 'yt-dlp'; // fallback para dev se não achar no local esperado
+
 const app = express();
 const PORT = 3001;
 
@@ -51,8 +57,7 @@ function sanitizeTitle(title) {
 
 function getCommonFlags() {
   const ffmpegLoc = ffmpegPath.replace(/\\/g, '/');
-  const nodeExec = process.execPath.replace(/\\/g, '/');
-  return `--ffmpeg-location "${ffmpegLoc}" --js-runtimes "node:${nodeExec}" --no-playlist --no-check-certificate`;
+  return `--ffmpeg-location "${ffmpegLoc}" --no-playlist --no-check-certificate`;
 }
 
 function isValidYouTubeUrl(url) {
@@ -86,7 +91,7 @@ async function processJob(job) {
   try {
     // 1. Get video title
     const { stdout: titleOut } = await execAsync(
-      `yt-dlp --print title ${commonFlags} "${job.url}"`,
+      `${YTDLP_BIN} --print title ${commonFlags} "${job.url}"`,
       { timeout: 30000 }
     );
     const title = sanitizeTitle(titleOut.trim());
@@ -95,7 +100,7 @@ async function processJob(job) {
     // 2. Convert / Download
     if (job.format === 'mp3') {
       await execAsync(
-        `yt-dlp -x --audio-format mp3 --audio-quality 0 ${commonFlags} -o "${outputTemplate}" "${job.url}"`,
+        `${YTDLP_BIN} -x --audio-format mp3 --audio-quality 0 ${commonFlags} -o "${outputTemplate}" "${job.url}"`,
         { timeout: EXEC_TIMEOUT }
       );
 
@@ -117,7 +122,7 @@ async function processJob(job) {
       }
 
       await execAsync(
-        `yt-dlp -f "${formatArg}" --merge-output-format mp4 ${commonFlags} -o "${outputTemplate}" "${job.url}"`,
+        `${YTDLP_BIN} -f "${formatArg}" --merge-output-format mp4 ${commonFlags} -o "${outputTemplate}" "${job.url}"`,
         { timeout: EXEC_TIMEOUT }
       );
 
@@ -175,7 +180,7 @@ app.post('/api/info', async (req, res) => {
 
   try {
     const { stdout } = await execAsync(
-      `yt-dlp --dump-json ${commonFlags} "${url}"`,
+      `${YTDLP_BIN} --dump-json ${commonFlags} "${url}"`,
       { timeout: 30000, maxBuffer: 10 * 1024 * 1024 }
     );
 
