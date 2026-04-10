@@ -190,7 +190,8 @@ ipcMain.on('notify', (event, { title, body }) => {
 
 // --- Auto-Update Config ---
 autoUpdater.autoDownload = true;
-autoUpdater.allowPrerelease = false;
+autoUpdater.allowPrerelease = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 function setupAutoUpdater(window) {
   autoUpdater.on('checking-for-update', () => {
