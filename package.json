@@ -1,6 +1,6 @@
 {
   "name": "youtube-converter-pro",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "YouTube Downloader Desktop",
   "main": "main.js",
   "type": "module",
@@ -12,7 +12,7 @@
     "build:frontend": "cd frontend && npm install && npm run build",
     "build:backend": "cd backend && npm install",
     "dist": "npm run build:frontend && npm run build:backend && electron-builder",
-    "release": "npm version patch && npm run dist"
+    "release": "npm version patch && npm run dist && git push"
   },
   "build": {
     "appId": "com.daniel.ytconverterpro",
