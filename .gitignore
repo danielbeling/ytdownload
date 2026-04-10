@@ -1,0 +1,13 @@
+node_modules/
+dist/
+dist_electron/
+*.log
+.env
+.DS_Store
+frontend/dist/
+backend/node_modules/
+backend/venv/
+backend/__pycache__/
+*.exe
+*.zip
+settings.json
