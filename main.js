@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell, dialog, Notification } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
 import path from 'path';
 import fs from 'fs';
 import isDev from 'electron-is-dev';
