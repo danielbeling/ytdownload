@@ -81,9 +81,9 @@ export default function App() {
     <div className="app">
       {/* Banner de Atualização */}
       {updateMsg && (
-        <div className="update-banner">
+        <div className={`update-banner ${updateMsg.toLowerCase().includes('erro') ? 'error' : ''}`}>
           <div className="update-content">
-            <FaSync className="spin" />
+            <FaSync className={updateMsg.toLowerCase().includes('erro') ? '' : 'spin'} />
             <span>{updateMsg}</span>
             {updateProgress > 0 && updateProgress < 100 && (
               <div className="update-mini-progress">

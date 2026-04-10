@@ -216,7 +216,8 @@ function setupAutoUpdater(window) {
   });
   
   autoUpdater.on('error', (err) => {
-    window.webContents.send('update-message', 'Erro na atualização.');
+    const errorMsg = err.message || 'Erro desconhecido na atualização.';
+    window.webContents.send('update-message', `Erro: ${errorMsg}`);
     safeLog(`[Update Error] ${err.stack || err}`, 'error');
   });
 }
