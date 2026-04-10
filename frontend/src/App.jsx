@@ -97,8 +97,8 @@ export default function App() {
 
       {/* ── Header ── */}
       <header className="header" style={{ position: 'relative' }}>
-        <button 
-          className="btn btn-ghost" 
+        <button
+          className="btn btn-ghost"
           onClick={() => setIsSettingsOpen(true)}
           style={{ position: 'absolute', top: '1rem', right: '1rem', padding: '0.5rem' }}
           title="Configurações"
@@ -115,7 +115,7 @@ export default function App() {
         <h1>
           {activeTab === 'mp3'
             ? <>Converta vídeos do<br />YouTube em MP3</>
-            : <>Baixe vídeos do<br />YouTube em MP4</>
+            : <>Baixe vídeos do<br />YouTube em MP4 - </>
           }
         </h1>
         <p>
@@ -324,9 +324,9 @@ export default function App() {
         <p className="version-tag">Versão {appVersion}</p>
       </footer>
       {/* Modals */}
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );
