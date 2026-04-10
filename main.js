@@ -9,6 +9,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isDev = !app.isPackaged;
 
+// --- Sistema de Logs ---
+const logPath = path.join(app.getPath('userData'), 'app.log');
+const logStream = fs.createWriteStream(logPath, { flags: 'a' });
+
+function safeLog(msg, level = 'info') {
+  const line = `[${new Date().toISOString()}] [${level.toUpperCase()}] ${msg}\n`;
+  console.log(msg);
+  logStream.write(line);
+}
+
+safeLog(`=== App Iniciado (v${app.getVersion()}) ===`);
+
 // --- Configurações e Persistência ---
 const configPath = path.join(app.getPath('userData'), 'settings.json');
 let settings = {
@@ -39,7 +51,7 @@ function getBackendPath() {
     ? path.join(process.resourcesPath, 'backend', 'server.js')
     : path.join(__dirname, 'backend', 'server.js');
     
-  console.log('[Electron] Usando backend em:', backendPath);
+  safeLog(`[Electron] Usando backend em: ${backendPath}`);
   return backendPath;
 }
 
@@ -47,7 +59,7 @@ function startBackend() {
   const backendPath = getBackendPath();
   
   if (!fs.existsSync(backendPath)) {
-    console.error('[Electron Error] Arquivo do backend não encontrado:', backendPath);
+    safeLog(`[Electron Error] Arquivo do backend não encontrado: ${backendPath}`, 'error');
     return;
   }
 
@@ -60,11 +72,11 @@ function startBackend() {
     }
   });
 
-  serverProcess.stdout.on('data', (data) => console.log('[Backend Log]', data.toString()));
-  serverProcess.stderr.on('data', (data) => console.error('[Backend Error]', data.toString()));
+  serverProcess.stdout.on('data', (data) => safeLog(`[Backend Log] ${data.toString().trim()}`));
+  serverProcess.stderr.on('data', (data) => safeLog(`[Backend Error] ${data.toString().trim()}`, 'error'));
   
   serverProcess.on('exit', (code) => {
-    console.log(`[Backend] Processo finalizado com código: ${code}`);
+    safeLog(`[Backend] Processo finalizado com código: ${code}`);
   });
 }
 
@@ -199,7 +211,7 @@ function setupAutoUpdater(window) {
   
   autoUpdater.on('error', (err) => {
     window.webContents.send('update-message', 'Erro na atualização.');
-    console.error('Update Error:', err);
+    safeLog(`[Update Error] ${err.stack || err}`, 'error');
   });
 }
 
