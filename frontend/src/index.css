@@ -235,6 +235,65 @@ html, body {
   margin-top: 0.4rem;
 }
 
+/* ─── Update Banner ───────────────────────────────────────────────────────── */
+.update-banner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(124, 58, 237, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+  animation: fadeSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.update-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.update-mini-progress {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.update-mini-bar {
+  height: 100%;
+  background: white;
+  border-radius: 999px;
+}
+
+.update-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.update-close:hover { opacity: 1; }
+
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
 /* ─── Buttons ───────────────────────────────────────────────────────────────── */
 .btn-row {
   display: flex;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useConversions } from './hooks/useConversions';
 import { useVideoDownload } from './hooks/useVideoDownload';
 import FormatTabs from './components/FormatTabs';
@@ -38,15 +38,29 @@ export default function App() {
     error: mp4Error,
     fetchInfo,
     downloadMp4,
+    downloadFinished,
+    openFolder: openMp4Folder,
     reset: resetMp4,
   } = useVideoDownload();
 
   const [mp4Url, setMp4Url] = useState('');
   const [appVersion, setAppVersion] = useState('...');
+  const [updateMsg, setUpdateMsg] = useState(null);
+  const [updateProgress, setUpdateProgress] = useState(0);
 
   useEffect(() => {
     if (window.electronAPI) {
       window.electronAPI.getVersion().then(setAppVersion).catch(() => setAppVersion('v1.0.0'));
+
+      // Listeners de atualização
+      window.electronAPI.onUpdateMessage((msg) => setUpdateMsg(msg));
+      window.electronAPI.onUpdateProgress((progress) => {
+        setUpdateProgress(Math.round(progress.percent));
+      });
+      window.electronAPI.onUpdateDownloaded(() => {
+        setUpdateMsg('Concluído! Reiniciando...');
+        setTimeout(() => window.electronAPI.restartApp(), 2000);
+      });
     }
   }, []);
 
@@ -65,6 +79,22 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Banner de Atualização */}
+      {updateMsg && (
+        <div className="update-banner">
+          <div className="update-content">
+            <FaSync className="spin" />
+            <span>{updateMsg}</span>
+            {updateProgress > 0 && updateProgress < 100 && (
+              <div className="update-mini-progress">
+                <div className="update-mini-bar" style={{ width: `${updateProgress}%` }} />
+              </div>
+            )}
+          </div>
+          <button className="update-close" onClick={() => setUpdateMsg(null)}>×</button>
+        </div>
+      )}
+
       {/* ── Header ── */}
       <header className="header" style={{ position: 'relative' }}>
         <button 
@@ -232,6 +262,8 @@ export default function App() {
                   videoInfo={videoInfo}
                   onDownload={downloadMp4}
                   downloading={downloading}
+                  downloadFinished={downloadFinished}
+                  onOpenFolder={openMp4Folder}
                 />
 
                 {/* Download Progress */}

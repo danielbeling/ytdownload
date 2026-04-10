@@ -25,7 +25,7 @@ function formatBytes(bytes) {
   return `${mb.toFixed(0)} MB`;
 }
 
-export default function VideoInfoCard({ videoInfo, onDownload, downloading }) {
+export default function VideoInfoCard({ videoInfo, onDownload, downloading, downloadFinished, onOpenFolder }) {
   const [selectedQuality, setSelectedQuality] = useState(
     videoInfo?.formats?.[0]?.format_id || 'best'
   );
@@ -87,24 +87,35 @@ export default function VideoInfoCard({ videoInfo, onDownload, downloading }) {
             </div>
           </div>
 
-          {/* Download button */}
-          <button
-            className="btn btn-download-mp4"
-            onClick={() => onDownload(selectedQuality)}
-            disabled={downloading}
-          >
-            {downloading ? (
-              <>
-                <span className="spinner" />
-                Preparando...
-              </>
-            ) : (
-              <>
-                <MdDownload size={20} />
-                Baixar MP4
-              </>
-            )}
-          </button>
+          {/* Action button */}
+          {downloadFinished ? (
+            <button
+              className="btn btn-success"
+              onClick={onOpenFolder}
+              style={{ marginTop: '0.5rem', width: 'fit-content' }}
+            >
+              <MdDownload size={20} />
+              Abrir Pasta
+            </button>
+          ) : (
+            <button
+              className="btn btn-download-mp4"
+              onClick={() => onDownload(selectedQuality)}
+              disabled={downloading}
+            >
+              {downloading ? (
+                <>
+                  <span className="spinner" />
+                  Preparando...
+                </>
+              ) : (
+                <>
+                  <MdDownload size={20} />
+                  Baixar MP4
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

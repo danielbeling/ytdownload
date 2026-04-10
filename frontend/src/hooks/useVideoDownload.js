@@ -6,6 +6,7 @@ export function useVideoDownload() {
   const [videoInfo, setVideoInfo] = useState(null);
   const [loadingInfo, setLoadingInfo] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadFinished, setDownloadFinished] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(null); // { percent, loaded, total }
   const [error, setError] = useState(null);
 
@@ -13,6 +14,7 @@ export function useVideoDownload() {
     setLoadingInfo(true);
     setError(null);
     setVideoInfo(null);
+    setDownloadFinished(false);
     setDownloadProgress(null);
 
     try {
@@ -90,7 +92,7 @@ export function useVideoDownload() {
 
           if (window.electronAPI) {
             window.electronAPI.notify('Vídeo Baixado!', `O vídeo "${statusData.title || 'Vídeo'}" foi salvo com sucesso.`);
-            window.electronAPI.openFolder();
+            // Não abre a pasta sozinho!
           } else {
             const blob = new Blob(chunks, { type: 'video/mp4' });
             const blobUrl = URL.createObjectURL(blob);
@@ -103,6 +105,7 @@ export function useVideoDownload() {
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
           }
 
+          setDownloadFinished(true);
           setDownloadProgress({ percent: 100, loaded, total });
         } else if (statusData.status === 'error') {
           throw new Error(statusData.error || 'Falha ao processar vídeo.');
@@ -131,6 +134,8 @@ export function useVideoDownload() {
     error,
     fetchInfo,
     downloadMp4,
+    downloadFinished,
+    openFolder: () => window.electronAPI?.openFolder(),
     reset,
   };
 }

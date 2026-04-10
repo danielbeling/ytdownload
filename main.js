@@ -231,11 +231,9 @@ app.whenReady().then(() => {
   startBackend();
   createWindow();
   
-  if (mainWindow) {
+  if (mainWindow && !isDev) {
     setupAutoUpdater(mainWindow);
-    if (!isDev) {
-      autoUpdater.checkForUpdatesAndNotify();
-    }
+    autoUpdater.checkForUpdatesAndNotify();
   }
 });
 
