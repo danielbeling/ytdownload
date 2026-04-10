@@ -21,7 +21,8 @@
       {
         "provider": "github",
         "owner": "danielbeling",
-        "repo": "ytdownload"
+        "repo": "ytdownload",
+        "releaseType": "release"
       }
     ],
     "directories": {

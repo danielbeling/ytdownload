@@ -193,6 +193,13 @@ autoUpdater.autoDownload = true;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
+// Redirecionar logs do updater para o nosso log de arquivo
+autoUpdater.logger = {
+  info: (msg) => safeLog(`[Updater Info] ${msg}`, 'info'),
+  warn: (msg) => safeLog(`[Updater Warn] ${msg}`, 'warn'),
+  error: (msg) => safeLog(`[Updater Error] ${msg}`, 'error')
+};
+
 function setupAutoUpdater(window) {
   autoUpdater.on('checking-for-update', () => {
     window.webContents.send('update-message', 'Verificando atualizações...');
