@@ -115,7 +115,7 @@ export default function App() {
         <h1>
           {activeTab === 'mp3'
             ? <>Converta vídeos do<br />YouTube em MP3</>
-            : <>Baixe vídeos do<br />YouTube em MP4 - </>
+            : <>Baixe vídeos do<br />YouTube em MP4</>
           }
         </h1>
         <p>
